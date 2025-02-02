@@ -1,0 +1,25 @@
+name: smile
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.6.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  device_preview: ^1.2.0
+  google_fonts: ^5.1.0  # Dependencia para las fuentes de Google
+  flutter_local_notifications: ^9.1.4  # Para las notificaciones locales
+  date_picker_widget: ^0.0.4 # Paquete alternativo para el selector de fechas
+  intl: ^0.19.0  # Para el manejo de fechas
+  table_calendar: ^3.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
