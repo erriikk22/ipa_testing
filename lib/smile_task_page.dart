@@ -76,20 +76,29 @@ class _SmileTaskPageState extends State<SmileTaskPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          title: Text("Add New Task", style: GoogleFonts.poppins(fontSize: 22, fontWeight: FontWeight.bold)),
+          backgroundColor: Colors.grey[100],
+          title: Text("Add New Task", style: GoogleFonts.poppins(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               // Título de la tarea
               TextField(
                 controller: _titleController,
-                decoration: InputDecoration(labelText: 'Title'),
+                decoration: InputDecoration(
+                  labelText: 'Title',
+                  labelStyle: TextStyle(color: Colors.black.withOpacity(0.7)),
+                  focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
+                ),
               ),
               SizedBox(height: 10),
               // Descripción de la tarea
               TextField(
                 controller: _descriptionController,
-                decoration: InputDecoration(labelText: 'Description'),
+                decoration: InputDecoration(
+                  labelText: 'Description',
+                  labelStyle: TextStyle(color: Colors.black.withOpacity(0.7)),
+                  focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
+                ),
               ),
               SizedBox(height: 10),
               // Selector de fecha
@@ -97,10 +106,10 @@ class _SmileTaskPageState extends State<SmileTaskPage> {
                 children: [
                   Text(
                     "Due: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}",
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 16, color: Colors.black.withOpacity(0.8)),
                   ),
                   IconButton(
-                    icon: Icon(Icons.calendar_today),
+                    icon: Icon(Icons.calendar_today, color: Colors.blue),
                     onPressed: () => _selectDate(context),
                   ),
                 ],
@@ -108,7 +117,7 @@ class _SmileTaskPageState extends State<SmileTaskPage> {
               SizedBox(height: 10),
               // Selector de prioridad
               DropdownButton<String>(
-                hint: Text("Select Priority"),
+                hint: Text("Select Priority", style: TextStyle(color: Colors.black.withOpacity(0.7))),
                 onChanged: (String? value) {
                   if (value != null) {
                     _addTask(value);
@@ -118,7 +127,7 @@ class _SmileTaskPageState extends State<SmileTaskPage> {
                 items: <String>['High', 'Medium', 'Low'].map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
-                    child: Text(value),
+                    child: Text(value, style: TextStyle(color: Colors.black)),
                   );
                 }).toList(),
               ),
@@ -147,6 +156,15 @@ class _SmileTaskPageState extends State<SmileTaskPage> {
     _saveTasks(); // Guardamos las tareas después de marcar una tarea como completada
   }
 
+  // Función para eliminar una tarea
+  void _deleteTask(int index) {
+    setState(() {
+      _tasks.removeAt(index);
+    });
+
+    _saveTasks(); // Guardamos las tareas después de eliminar una tarea
+  }
+
   // Función para abrir la página de edición de tarea
   void _openEditTaskPage(int index) {
     showDialog(
@@ -157,20 +175,29 @@ class _SmileTaskPageState extends State<SmileTaskPage> {
         _descriptionController.text = task['description'];
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          title: Text("Edit Task", style: GoogleFonts.poppins(fontSize: 22, fontWeight: FontWeight.bold)),
+          backgroundColor: Colors.grey[100],
+          title: Text("Edit Task", style: GoogleFonts.poppins(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               // Título de la tarea
               TextField(
                 controller: _titleController,
-                decoration: InputDecoration(labelText: 'Title'),
+                decoration: InputDecoration(
+                  labelText: 'Title',
+                  labelStyle: TextStyle(color: Colors.black.withOpacity(0.7)),
+                  focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
+                ),
               ),
               SizedBox(height: 10),
               // Descripción de la tarea
               TextField(
                 controller: _descriptionController,
-                decoration: InputDecoration(labelText: 'Description'),
+                decoration: InputDecoration(
+                  labelText: 'Description',
+                  labelStyle: TextStyle(color: Colors.black.withOpacity(0.7)),
+                  focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
+                ),
               ),
               SizedBox(height: 10),
               // Selector de fecha
@@ -178,10 +205,10 @@ class _SmileTaskPageState extends State<SmileTaskPage> {
                 children: [
                   Text(
                     "Due: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}",
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 16, color: Colors.black.withOpacity(0.8)),
                   ),
                   IconButton(
-                    icon: Icon(Icons.calendar_today),
+                    icon: Icon(Icons.calendar_today, color: Colors.blue),
                     onPressed: () => _selectDate(context),
                   ),
                 ],
@@ -201,7 +228,7 @@ class _SmileTaskPageState extends State<SmileTaskPage> {
                 items: <String>['High', 'Medium', 'Low'].map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
-                    child: Text(value),
+                    child: Text(value, style: TextStyle(color: Colors.black)),
                   );
                 }).toList(),
               ),
@@ -281,17 +308,31 @@ class _SmileTaskPageState extends State<SmileTaskPage> {
                     child: Card(
                       margin: EdgeInsets.symmetric(vertical: 8),
                       color: _getPriorityColor(task['priority']), // Cambia el color de la tarjeta según la prioridad
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      elevation: 4,
                       child: ListTile(
                         title: Text(
                           task['title'],
                           style: TextStyle(
                             decoration: task['completed'] ? TextDecoration.lineThrough : null,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                        subtitle: Text('Due: ${DateTime.parse(task['dueDate']).toLocal()}'),
-                        trailing: IconButton(
-                          icon: Icon(task['completed'] ? Icons.check_box : Icons.check_box_outline_blank),
-                          onPressed: () => _toggleTaskCompletion(index),
+                        subtitle: Text('Due: ${DateTime.parse(task['dueDate']).toLocal()}', style: TextStyle(color: Colors.black.withOpacity(0.7))),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: Icon(task['completed'] ? Icons.check_box : Icons.check_box_outline_blank),
+                              onPressed: () => _toggleTaskCompletion(index),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.delete, color: Colors.red),
+                              onPressed: () => _deleteTask(index), // Llamada para eliminar la tarea
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -306,8 +347,8 @@ class _SmileTaskPageState extends State<SmileTaskPage> {
           ? FloatingActionButton(
               onPressed: _openAddTaskDialog,
               child: Icon(Icons.add),
-              backgroundColor: const Color.fromARGB(255, 43, 43, 43), // Color bonito para el botón
-              hoverColor: const Color.fromARGB(118, 94, 92, 92),
+              backgroundColor: Colors.blue, // Color del botón flotante
+              hoverColor: Colors.blueAccent,
             )
           : null,
     );

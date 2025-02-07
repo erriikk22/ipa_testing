@@ -1,15 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:smile/upgradeplanpage.dart';
-import 'package:smile/smile_task_page.dart';
-import 'package:smile/smile_calendar_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smile/smile_market_page.dart';
+import 'package:smile/upgradeplanpage.dart';
+import 'package:smile/smile_calendar_page.dart' as calenadrPage;
+import 'package:smile/smile_task_page.dart' as taskPage;
+import 'package:smile/smile_calendar_page.dart' as calendarPage;
 
 
-class HubScreen extends StatelessWidget {
+class HubScreen extends StatefulWidget {
   final bool isDarkMode;
 
   const HubScreen({super.key, required this.isDarkMode});
+
+  @override
+  _HubScreenState createState() => _HubScreenState();
+}
+
+class _HubScreenState extends State<HubScreen> {
+  List<String> recentActions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRecentActions();
+  }
+
+  Future<void> _loadRecentActions() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      recentActions = prefs.getStringList('recent_actions') ?? [];
+    });
+  }
+
+  Future<void> addRecentAction(String action) async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String> updatedActions = [action, ...recentActions];
+    if (updatedActions.length > 5) updatedActions.removeLast(); // Máximo 5 acciones recientes
+    await prefs.setStringList('recent_actions', updatedActions);
+    setState(() {
+      recentActions = updatedActions;
+    });
+  }
 
   String _getGreeting() {
     final hour = DateTime.now().hour;
@@ -24,7 +56,7 @@ class HubScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor = isDarkMode ? const Color.fromARGB(255, 197, 197, 197) : Colors.white;
+    final backgroundColor = widget.isDarkMode ? const Color.fromARGB(255, 197, 197, 197) : Colors.white;
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -77,10 +109,10 @@ class HubScreen extends StatelessWidget {
                 title: "Smile Task",
                 icon: Icons.check_circle,
                 onTap: () {
-                  // Redirige a la página de Smile Task
+                  addRecentAction("Abriste Smile Task");
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SmileTaskPage()),
+                    MaterialPageRoute(builder: (context) => taskPage.SmileTaskPage()),
                   );
                 },
               ),
@@ -90,10 +122,10 @@ class HubScreen extends StatelessWidget {
                 title: "Smile Calendar",
                 icon: Icons.calendar_today,
                 onTap: () {
-                  // Redirige a la página de Smile Calendar
+                  addRecentAction("Revisaste Smile Calendar");
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SmileCalendarPage()),
+                    MaterialPageRoute(builder: (context) => calendarPage.SmileCalendarPage()),
                   );
                 },
               ),
@@ -103,7 +135,7 @@ class HubScreen extends StatelessWidget {
                 title: "Smile Market",
                 icon: Icons.storefront,
                 onTap: () {
-                  // Redirige a la página de Smile Market
+                  addRecentAction("Exploraste Smile Market");
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => SmileMarketPage()),
@@ -124,7 +156,7 @@ class HubScreen extends StatelessWidget {
     required IconData icon,
     required Function() onTap,
   }) {
-    final backgroundColor = isDarkMode ? const Color.fromARGB(255, 212, 207, 207) : Colors.white;
+    final backgroundColor = widget.isDarkMode ? const Color.fromARGB(255, 212, 207, 207) : Colors.white;
 
     return GestureDetector(
       onTap: onTap,
@@ -182,7 +214,7 @@ class HubScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Recomendaciones recientes',
+          'Cosas recientes:',
           style: GoogleFonts.poppins(
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -190,28 +222,25 @@ class HubScreen extends StatelessWidget {
           ),
         ),
         SizedBox(height: 12),
-        _buildRecommendationItem(
-          "Tarea completada: 'Recoger suministros'",
-          "Asegúrate de completar esta tarea para avanzar al siguiente nivel.",
-        ),
-        _buildRecommendationItem(
-          "Nuevo evento en el calendario",
-          "Revisa tu calendario para ver el próximo evento importante.",
-        ),
-        _buildRecommendationItem(
-          "Nuevo producto en Smile Market",
-          "¡No te pierdas los últimos artículos disponibles en el mercado!",
-        ),
+        if (recentActions.isEmpty)
+          Text(
+            "No hay acciones recientes.",
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              color: Colors.black54,
+            ),
+          ),
+        ...recentActions.map((action) => _buildRecommendationItem(action)).toList(),
       ],
     );
   }
 
-  Widget _buildRecommendationItem(String title, String description) {
+  Widget _buildRecommendationItem(String title) {
     return Container(
       margin: EdgeInsets.only(bottom: 13),
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.grey[350] : Colors.white,
+        color: widget.isDarkMode ? Colors.grey[350] : Colors.white,
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
@@ -221,29 +250,14 @@ class HubScreen extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: GoogleFonts.poppins(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.black,
-            ),
-          ),
-          SizedBox(height: 6),
-          Text(
-            description,
-            style: GoogleFonts.poppins(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              color: Colors.black.withOpacity(0.7),
-            ),
-          ),
-        ],
+      child: Text(
+        title,
+        style: GoogleFonts.poppins(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: Colors.black,
+        ),
       ),
     );
   }
 }
-

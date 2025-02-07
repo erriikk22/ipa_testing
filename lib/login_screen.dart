@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smile/home_screen.dart';
 import 'package:smile/register_screen.dart';
-import 'package:smile/home_screen.dart';
-
 
 void main() {
   runApp(const SmileApp());
@@ -51,18 +49,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _checkLogin() {
     if (emailController.text == '1' && passwordController.text == '1') {
-      // Navegar a la pantalla de inicio
       Navigator.pushReplacement(
         context,
-         MaterialPageRoute(
-    builder: (context) => HubScreen(isDarkMode: widget.isDarkMode),
-      ),
+        MaterialPageRoute(builder: (context) => HubScreen(isDarkMode: widget.isDarkMode)),
       );
     } else {
-      // Mostrar un mensaje de error
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Invalid login credentials")),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Invalid login credentials")));
     }
   }
 
@@ -79,19 +71,12 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               Text(
                 "Welcome to Smile",
-                style: GoogleFonts.poppins(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: widget.isDarkMode ? Colors.white : Colors.black,
-                ),
+                style: GoogleFonts.poppins(fontSize: 28, fontWeight: FontWeight.bold, color: widget.isDarkMode ? Colors.white : Colors.black),
               ),
               const SizedBox(height: 10),
               Text(
                 "Sign in to continue",
-                style: GoogleFonts.poppins(
-                  fontSize: 16,
-                  color: widget.isDarkMode ? Colors.white54 : Colors.black54,
-                ),
+                style: GoogleFonts.poppins(fontSize: 16, color: widget.isDarkMode ? Colors.white54 : Colors.black54),
               ),
               const SizedBox(height: 40),
               _buildTextField("Email", Icons.email_outlined, widget.isDarkMode, emailController),
@@ -102,19 +87,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: _checkLogin,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueAccent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 child: Center(
                   child: Text(
                     "Sign In",
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
+                    style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.white),
                   ),
                 ),
               ),
@@ -124,14 +103,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   Text(
                     "Don't have an account? ",
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      color: widget.isDarkMode ? Colors.white54 : Colors.black54,
-                    ),
+                    style: GoogleFonts.poppins(fontSize: 14, color: widget.isDarkMode ? Colors.white54 : Colors.black54),
                   ),
                   GestureDetector(
                     onTap: () {
-                      // Navegar a la pantalla de registro
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -141,11 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: Text(
                       "Register",
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        color: Colors.blueAccent,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: GoogleFonts.poppins(fontSize: 14, color: Colors.blueAccent, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ],
